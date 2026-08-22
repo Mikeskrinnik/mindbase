@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "mindbase": {
+      "command": "python3",
+      "args": ["-m", "mindbase_mcp.server"],
+      "env": {
+        "MINDBASE_API_URL": "http://100.64.0.1:8080",
+        "MINDBASE_API_KEY": "your-secret-key-here"
+      }
+    }
+  }
+}

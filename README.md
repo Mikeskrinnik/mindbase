@@ -74,6 +74,18 @@ mindbase-sync watch --vault ~/Documents/MyVault
 
 Подробная инструкция: [docs/obsidian-icloud.md](docs/obsidian-icloud.md)
 
+## Домашний сервер (старый iMac)
+
+iMac + iCloud + Tailscale — без облачного хостинга:
+
+```bash
+docker compose up -d          # API на iMac
+mindbase-sync watch           # Obsidian → API → iCloud
+# Tailscale для доступа с MacBook
+```
+
+Подробно: [docs/home-lab-imac.md](docs/home-lab-imac.md)
+
 ## Лицензия
 
 MIT
