@@ -1,0 +1,9 @@
+{
+  "id": "mindbase-sync",
+  "name": "Mindbase Sync",
+  "version": "0.1.0",
+  "minAppVersion": "1.4.0",
+  "description": "Автоматически отправляет заметки в Mindbase при сохранении",
+  "author": "Mike Skrinnik",
+  "isDesktopOnly": false
+}

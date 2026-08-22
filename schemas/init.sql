@@ -7,7 +7,7 @@ CREATE EXTENSION IF NOT EXISTS pg_trgm;
 CREATE TABLE sources (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name TEXT NOT NULL UNIQUE,
-    kind TEXT NOT NULL CHECK (kind IN ('cli', 'webhook', 'mcp', 'browser', 'mobile', 'voice', 'manual')),
+    kind TEXT NOT NULL CHECK (kind IN ('cli', 'webhook', 'mcp', 'browser', 'mobile', 'voice', 'manual', 'obsidian')),
     config JSONB NOT NULL DEFAULT '{}',
     is_active BOOLEAN NOT NULL DEFAULT true,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
@@ -93,4 +93,5 @@ INSERT INTO sources (name, kind) VALUES
     ('cli', 'cli'),
     ('webhook', 'webhook'),
     ('mcp', 'mcp'),
-    ('manual', 'manual');
+    ('manual', 'manual'),
+    ('obsidian', 'obsidian');

@@ -7,9 +7,10 @@
 Mindbase собирает «сырой» контекст из разных источников, нормализует его, извлекает сущности, строит семантические embeddings и отдаёт структурированные данные через REST API и MCP-протокол.
 
 ```
-[Источники] → [Collector] → [API Gateway] → [Queue] → [Worker] → [PostgreSQL + pgvector]
-                                                                    ↘ [MinIO/S3]
-                                              [MCP Server] ←──────────┘
+[Obsidian Vault] ──→ [Sync Agent] ──→ [API] ──→ [Worker] ──→ [PostgreSQL + pgvector]
+                         │                                      ↘ [MinIO/S3]
+                         └──── [iCloud Drive] ←──────────────────┘
+                                              [MCP Server] ← AI-модели
                                               [REST API]
 ```
 
@@ -20,6 +21,8 @@ Mindbase собирает «сырой» контекст из разных ис
 | CLI / stdin | ✅ v0 | Текст, файлы, clipboard |
 | REST webhook | ✅ v0 | Интеграции (Shortcuts, Zapier, n8n) |
 | MCP push | ✅ v0 | Прямая запись из Cursor/Claude |
+| **Obsidian** | ✅ v0 | Vault sync + community plugin |
+| **iCloud Drive** | ✅ v0 | Markdown-хранилище, синхронизация Apple |
 | Browser extension | 🔜 v1 | Страницы, выделения |
 | macOS/iOS agent | 🔜 v1 | Фоновый сбор без участия |
 | Voice | 🔜 v2 | Whisper-транскрипция |
@@ -58,6 +61,18 @@ cd packages/api && pip install -e ".[dev]" && uvicorn mindbase_api.main:app --re
 - S3 cross-region replication для вложений
 
 Deploy: [infra/terraform/README.md](infra/terraform/README.md)
+
+## Obsidian + iCloud
+
+Подключение существующих инструментов — без смены привычного workflow:
+
+```bash
+pip install ./packages/sync-agent
+mindbase-sync init
+mindbase-sync watch --vault ~/Documents/MyVault
+```
+
+Подробная инструкция: [docs/obsidian-icloud.md](docs/obsidian-icloud.md)
 
 ## Лицензия
 

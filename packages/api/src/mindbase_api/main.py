@@ -231,3 +231,51 @@ async def context_summary(session: AsyncSession = Depends(get_session)):
         lines.append("")
 
     return {"format": "markdown", "content": "\n".join(lines), "entry_count": len(entries)}
+
+
+@app.get("/v1/export/entries", dependencies=[Depends(verify_api_key)])
+async def export_entries(
+    since: datetime | None = Query(default=None, description="ISO timestamp for incremental export"),
+    limit: int = Query(default=500, ge=1, le=5000),
+    session: AsyncSession = Depends(get_session),
+):
+    """Export structured entries for iCloud mirror / offline sync."""
+    sql = """
+        SELECT e.id, e.fragment_id, e.title, e.summary, e.body, e.tags, e.entities,
+               e.importance, e.valid_from, e.valid_until, e.created_at,
+               COALESCE(s.name, 'unknown') AS source
+        FROM entries e
+        LEFT JOIN fragments f ON f.id = e.fragment_id
+        LEFT JOIN sources s ON s.id = f.source_id
+        WHERE 1=1
+    """
+    params: dict = {"limit": limit}
+
+    if since:
+        sql += " AND e.updated_at >= :since"
+        params["since"] = since
+
+    sql += " ORDER BY e.updated_at ASC LIMIT :limit"
+
+    result = await session.execute(text(sql), params)
+    rows = result.fetchall()
+
+    entries = [
+        {
+            "id": str(row.id),
+            "fragment_id": str(row.fragment_id) if row.fragment_id else None,
+            "title": row.title,
+            "summary": row.summary,
+            "body": row.body,
+            "tags": list(row.tags or []),
+            "entities": row.entities or [],
+            "importance": row.importance,
+            "valid_from": row.valid_from.isoformat() if row.valid_from else None,
+            "valid_until": row.valid_until.isoformat() if row.valid_until else None,
+            "created_at": row.created_at.isoformat() if row.created_at else None,
+            "source": row.source,
+        }
+        for row in rows
+    ]
+
+    return {"entries": entries, "count": len(entries), "since": since.isoformat() if since else None}

@@ -40,3 +40,10 @@ class Settings(BaseSettings):
     # Queue
     stream_key: str = "mindbase:fragments"
     consumer_group: str = "mindbase-workers"
+
+    # iCloud + Obsidian sync (macOS agent)
+    icloud_mindbase_path: str = ""  # auto-detected if empty
+    obsidian_vault_path: str = ""   # e.g. ~/Documents/MyVault
+    sync_poll_interval_sec: int = 30
+    sync_obsidian_enabled: bool = True
+    sync_icloud_mirror: bool = True
