@@ -1,0 +1,5 @@
+aws_region     = "eu-central-1"
+environment    = "production"
+db_password    = "CHANGE-ME-strong-password"
+db_instance_class = "db.t4g.medium"
+api_desired_count = 2
