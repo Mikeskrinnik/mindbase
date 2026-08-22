@@ -86,6 +86,16 @@ mindbase-sync watch           # Obsidian → API → iCloud
 
 Подробно: [docs/home-lab-imac.md](docs/home-lab-imac.md)
 
+## iMac 2012 + Windows 10
+
+Старый iMac на Win10 — рекомендуем **Режим Hub**: только sync-agent + iCloud, API на MacBook/VPS.
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\windows\setup.ps1
+```
+
+Подробно: [docs/windows-imac-2012.md](docs/windows-imac-2012.md)
+
 ## Лицензия
 
 MIT

@@ -1,10 +1,11 @@
 """iCloud Drive storage helpers.
 
-On macOS, iCloud Drive lives at:
+macOS:
   ~/Library/Mobile Documents/com~apple~CloudDocs/
 
-Mindbase uses a dedicated folder there so notes sync across iPhone, iPad, and Mac
-without a separate backend — Apple handles replication and offline cache.
+Windows (iCloud for Windows):
+  ~/iCloudDrive/
+  ~/Apple iCloud/iCloudDrive/
 """
 
 from __future__ import annotations
@@ -20,13 +21,37 @@ from typing import Any
 ICLOUD_CONTAINER = "com~apple~CloudDocs"
 DEFAULT_MINDBASE_FOLDER = "Mindbase"
 
+# Common iCloud for Windows install paths (varies by app version)
+WINDOWS_ICLOUD_CANDIDATES = (
+    "iCloudDrive",
+    "Apple iCloud/iCloudDrive",
+    "iCloud Drive",
+)
+
 
 def icloud_drive_root() -> Path | None:
     """Return iCloud Drive root if available on this machine."""
-    if platform.system() != "Darwin":
+    system = platform.system()
+
+    if system == "Darwin":
+        root = Path.home() / "Library" / "Mobile Documents" / ICLOUD_CONTAINER
+        return root if root.is_dir() else None
+
+    if system == "Windows":
+        home = Path.home()
+        for candidate in WINDOWS_ICLOUD_CANDIDATES:
+            root = home / candidate
+            if root.is_dir():
+                return root
+        # Some installs use OneDrive-style path under AppData (rare)
+        appdata = os.environ.get("APPDATA", "")
+        if appdata:
+            legacy = Path(appdata) / "Apple Inc" / "Apple iCloud Drive"
+            if legacy.is_dir():
+                return legacy
         return None
-    root = Path.home() / "Library" / "Mobile Documents" / ICLOUD_CONTAINER
-    return root if root.is_dir() else None
+
+    return None
 
 
 def resolve_mindbase_root(custom_path: str | None = None) -> Path:
